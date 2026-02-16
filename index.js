@@ -10,12 +10,12 @@ const app = express();   // 👈 MUST COME BEFORE ANY app.post/app.get
 app.use(express.json());
 
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'salon_db',
-  password: '1234',
-  port: 5432,
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
+
 
 const SECRET_KEY = "supersecretkey"; // later move to .env
 
@@ -437,7 +437,9 @@ app.get('/yearly-report-pdf', authenticateAdmin, async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 });
-app.listen(3000, () => {
-  console.log('Server running on port 3000');
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
 });
 
